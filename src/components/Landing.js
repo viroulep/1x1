@@ -1,7 +1,17 @@
 import React, { useReducer } from 'react';
 
-import { Button, Grid, Container, CssBaseline } from '@material-ui/core';
+import { Grid, Container, CssBaseline } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+import { loadStateFromJson } from '../logic/serialization';
+import { stateUpdater } from '../logic/state';
+
+import Teams from './Teams';
+import History from './History';
+import CreatePairings from './CreatePairings';
+
+// FIXME: tmp
+import sampledata from '../data.json';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,82 +24,31 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const dispatcher = (state, action) => {
-  const { type, data } = action;
-  switch (type) {
-    case 'toggleActive':
-      const { name, team } = data;
-      const newState = {
-        ...state,
-      };
-      const person = newState.teams[team].find((t) => t.name === name);
-      person.active = !person.active;
-      return newState;
-    default:
-      throw new Error();
-  }
-};
-
-const sampleState = {
-  // This should be basically readonly atm!
-  teams: {
-    epona: [
-      {
-        name: 'fifi',
-        active: true,
-      },
-      {
-        name: 'guiton',
-        active: true,
-      },
-      {
-        name: 'jmmartinez',
-        active: false,
-      },
-    ],
-    sales: [
-      {
-        name: 'kingtoto',
-        active: true,
-      },
-    ],
-  },
-  history: [
-    {
-      date: '2021-01-25',
-      pairings: [
-        ['fifi', 'guiton'],
-        ['kingtoto', 'iomumu'],
-      ],
-    },
-  ],
-};
-
 // TODO: setup the imported state and provide it
-// TODO: usedispatcher to partially update state
 const Landing = () => {
   const classes = useStyles();
-  const [state, updateState] = useReducer(dispatcher, sampleState);
-  const toto = () =>
-    updateState({
-      type: 'toggleActive',
-      data: { team: 'epona', name: 'fifi' },
-    });
-  console.log(state.teams.epona);
+  const [state, updateState] = useReducer(
+    stateUpdater,
+    loadStateFromJson(sampledata)
+  );
+
+  const { teams, history, peopleToTeam } = state;
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Grid container direction="column" className={classes.grow}>
-        <Grid item>coucou menuuuu</Grid>
-        <Grid item>
-          <Container>
-            recoucou
-            <Button variant="contained" onClick={toto}>
-              test
-            </Button>
-          </Container>
+      <Container>
+        <Grid container direction="column" spacing={2}>
+          <Grid item>
+            <CreatePairings teams={teams} peopleToTeam={peopleToTeam} />
+          </Grid>
+          <Grid item>
+            <Teams teams={teams} updateState={updateState} />
+          </Grid>
+          <Grid item>
+            <History history={history} peopleToTeam={peopleToTeam} />
+          </Grid>
         </Grid>
-      </Grid>
+      </Container>
     </div>
   );
 };
