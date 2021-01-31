@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import HistoryContent from './HistoryContent';
 import { createPairings } from '../logic/pairings';
+import { jsonFromState } from '../logic/serialization';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -13,14 +14,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CreatePairings = ({ teams, peopleToTeam, history, updateState }) => {
+const CreatePairings = ({ state, updateState }) => {
   const classes = useStyles();
+
+  const { teams, history, peopleToTeam } = state;
 
   const [pairings, setPairings] = useState(null);
   const [changed, setChanged] = useState(false);
   const pairingInHistory = pairings
     ? history.findIndex(({ date }) => date === pairings.date) !== -1
     : false;
+
+  const downloadAction = useCallback(() => {
+    const json = JSON.stringify(jsonFromState(state), null, 2);
+    const blob = new Blob([json], {
+      type: 'application/json',
+    });
+    const blobURL = window.URL.createObjectURL(blob);
+    const tmp = document.createElement('a');
+    tmp.href = blobURL;
+    tmp.setAttribute('download', '1x1-data.json');
+    document.body.appendChild(tmp);
+    tmp.click();
+  }, [state]);
 
   return (
     <div className={classes.root}>
@@ -75,7 +91,12 @@ const CreatePairings = ({ teams, peopleToTeam, history, updateState }) => {
                 </Button>
               </Grid>
               <Grid item>
-                <Button variant="contained" color="primary" disabled={!changed}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!changed}
+                  onClick={downloadAction}
+                >
                   Download the data
                 </Button>
               </Grid>

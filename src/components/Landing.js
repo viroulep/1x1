@@ -39,12 +39,7 @@ const Landing = () => {
       <Container>
         <Grid container direction="column" spacing={2}>
           <Grid item>
-            <CreatePairings
-              teams={teams}
-              peopleToTeam={peopleToTeam}
-              history={history}
-              updateState={updateState}
-            />
+            <CreatePairings state={state} updateState={updateState} />
           </Grid>
           <Grid item>
             <Teams teams={teams} updateState={updateState} />

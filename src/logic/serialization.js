@@ -19,4 +19,16 @@ export const loadStateFromJson = (json) => {
   return state;
 };
 
-export const jsonFromState = (state) => {};
+export const jsonFromState = (state) => {
+  const cleanedUp = {
+    teams: {},
+    history: state.history,
+  };
+  for (const [id, { name, people }] of Object.entries(state.teams)) {
+    cleanedUp.teams[id] = {
+      name,
+      people: people.map(({ name, participate }) => ({ name, participate })),
+    };
+  }
+  return cleanedUp;
+};
