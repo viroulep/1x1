@@ -20,8 +20,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const History = ({ history, peopleToTeam }) => {
+const History = ({ state }) => {
   const classes = useStyles();
+  const { history, peopleToTeam } = state;
   return (
     <div className={classes.root}>
       <Accordion>

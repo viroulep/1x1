@@ -2,6 +2,8 @@
 export const stateUpdater = (state, action) => {
   const { type, data } = action;
   switch (type) {
+    case 'setState':
+      return data;
     case 'addHistory':
       return {
         ...state,

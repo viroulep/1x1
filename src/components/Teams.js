@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Teams = ({ teams, updateState }) => {
+const Teams = ({ state, updateState }) => {
+  const { teams } = state;
   const classes = useStyles();
   return (
     <div className={classes.root}>
@@ -34,7 +35,7 @@ const Teams = ({ teams, updateState }) => {
         <AccordionDetails>
           <Grid container spacing={2}>
             {Object.values(teams).map((team) => (
-              <Grid item key={team.name} xs={12} md={4}>
+              <Grid item key={team.name} xs={12} sm={4} md={3}>
                 <Card variant="outlined">
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="h2">
