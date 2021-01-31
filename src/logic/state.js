@@ -2,6 +2,11 @@
 export const stateUpdater = (state, action) => {
   const { type, data } = action;
   switch (type) {
+    case 'addHistory':
+      return {
+        ...state,
+        history: [data, ...state.history],
+      };
     case 'toggleActive':
       const { name, teamId } = data;
       // FIXME: if more person updates are needed, it would be nice to have a

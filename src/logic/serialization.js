@@ -13,6 +13,7 @@ export const loadStateFromJson = (json) => {
       p.active = p.participate;
       peopleToTeam[p.name] = team.name;
     });
+    team.peopleSet = new Set(team.people.map(({ name }) => name));
   });
   state.peopleToTeam = peopleToTeam;
   return state;

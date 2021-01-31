@@ -4,11 +4,11 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  Grid,
   Typography,
-  Paper,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+import HistoryContent from './HistoryContent';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,16 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const stringForTeam = (t) => (t ? ` from team ${t}` : '');
-
-const Pair = ({ map, a, b }) => (
-  <div>
-    {a}
-    {stringForTeam(map[a])}, with {b}
-    {stringForTeam(map[b])}
-  </div>
-);
-
 const History = ({ history, peopleToTeam }) => {
   const classes = useStyles();
   return (
@@ -39,22 +29,7 @@ const History = ({ history, peopleToTeam }) => {
           <Typography variant="h2">History</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Grid container spacing={2}>
-            {history.map(({ date, pairings }) => (
-              <Grid item key={date} xs={12}>
-                <Typography gutterBottom variant="h5" component="h2">
-                  Pairing on {new Date(date).toUTCString()}
-                </Typography>
-                <Paper variant="outlined" square className={classes.pairing}>
-                  <Typography variant="body2" component="div">
-                    {pairings.map(([a, b]) => (
-                      <Pair key={`${a}-${b}`} a={a} b={b} map={peopleToTeam} />
-                    ))}
-                  </Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+          <HistoryContent history={history} peopleToTeam={peopleToTeam} />
         </AccordionDetails>
       </Accordion>
     </div>

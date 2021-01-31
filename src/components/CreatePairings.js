@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, Card, CardContent, Grid, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+
+import HistoryContent from './HistoryContent';
+import { createPairings } from '../logic/pairings';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -10,8 +13,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CreatePairings = ({ teams, peopleToTeam }) => {
+const CreatePairings = ({ teams, peopleToTeam, history, updateState }) => {
   const classes = useStyles();
+
+  const [pairings, setPairings] = useState(null);
+  const [changed, setChanged] = useState(false);
+  const pairingInHistory = pairings
+    ? history.findIndex(({ date }) => date === pairings.date) !== -1
+    : false;
+
   return (
     <div className={classes.root}>
       <Card>
@@ -39,19 +49,44 @@ const CreatePairings = ({ teams, peopleToTeam }) => {
                 </ol>
               </Typography>
             </Grid>
-            <Grid item>
-              <Button variant="contained" color="primary">
-                Create the pairings
-              </Button>
+            <Grid container item spacing={2}>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() =>
+                    setPairings(createPairings(teams, peopleToTeam, history))
+                  }
+                >
+                  Create the pairings
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={!pairings || pairingInHistory}
+                  onClick={() => {
+                    updateState({ type: 'addHistory', data: pairings });
+                    setChanged(true);
+                  }}
+                >
+                  Add to history
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant="contained" color="primary" disabled={!changed}>
+                  Download the data
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item>the pairings</Grid>
             <Grid item>
-              <Button variant="contained" color="primary">
-                Add to history
-              </Button>
-              <Button variant="contained" color="primary">
-                Download the data
-              </Button>
+              {pairings && (
+                <HistoryContent
+                  peopleToTeam={peopleToTeam}
+                  history={[pairings]}
+                />
+              )}
             </Grid>
           </Grid>
         </CardContent>
